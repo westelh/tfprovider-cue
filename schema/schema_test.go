@@ -136,3 +136,46 @@ func TestListOfSetExpr(t *testing.T) {
   }
 }
 
+func TestMapOfValueTypeBoolExpr(t *testing.T) {
+	got := schema.SchemaExpr(&tf_schema.Schema{
+		Type: tf_schema.TypeMap,
+		Elem: tf_schema.TypeBool,
+	})
+	want := "{_:bool}"
+	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
+		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
+	}
+}
+
+func TestMapOfValueTypeIntExpr(t *testing.T) {
+	got := schema.SchemaExpr(&tf_schema.Schema{
+		Type: tf_schema.TypeMap,
+		Elem: tf_schema.TypeInt,
+	})
+	want := "{_:int}"
+	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
+		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
+	}
+}
+
+func TestMapOfValueTypeFloatExpr(t *testing.T) {
+	got := schema.SchemaExpr(&tf_schema.Schema{
+		Type: tf_schema.TypeMap,
+		Elem: tf_schema.TypeFloat,
+	})
+	want := "{_:float}"
+	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
+		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
+	}
+}
+
+func TestMapOfValueTypeStringExpr(t *testing.T) {
+	got := schema.SchemaExpr(&tf_schema.Schema{
+		Type: tf_schema.TypeMap,
+		Elem: tf_schema.TypeString,
+	})
+	want := "{_:string}"
+	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
+		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
+	}
+}

@@ -22,11 +22,22 @@ func SchemaExpr(s *tf_schema.Schema) ast.Expr {
 	case tf_schema.TypeList:	// Ordering of elements is NOT preserved
 		return listOf(s.Elem)
 	case tf_schema.TypeMap:
-		// TypeMap only supports *Schema elements
-		// so we can safely cast s.Elem to *tf_schema.Schema
-		// as long as 's' is a valid schema
-		schema := s.Elem.(*tf_schema.Schema)
-		return mapOf(schema)
+		switch elem := s.Elem.(type) {
+		case *tf_schema.Schema:
+			return mapOf(elem)
+		case tf_schema.ValueType:
+			switch elem {
+			case tf_schema.TypeBool:
+				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeBool})
+			case tf_schema.TypeInt:
+				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeInt})
+			case tf_schema.TypeFloat:
+				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeFloat})
+			case tf_schema.TypeString:
+				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeString})
+			}
+			return nil
+		}
 	}
 	return nil
 }
