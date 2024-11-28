@@ -15,11 +15,11 @@ func SchemaExpr(s *tf_schema.Schema) ast.Expr {
 		return &ast.Ident{Name: "float"}
 	case tf_schema.TypeString:
 		return &ast.Ident{Name: "string"}
-	case tf_schema.TypeSet:	// Ordering of elements is preserved
+	case tf_schema.TypeSet: // Ordering of elements is preserved
 		// Expression should remark that the order of elements is preserved.
 		// But cue does not regard the order of elements after all.
 		return listOf(s.Elem)
-	case tf_schema.TypeList:	// Ordering of elements is NOT preserved
+	case tf_schema.TypeList: // Ordering of elements is NOT preserved
 		return listOf(s.Elem)
 	case tf_schema.TypeMap:
 		switch elem := s.Elem.(type) {
@@ -57,4 +57,3 @@ func mapOf(s *tf_schema.Schema) ast.Expr {
 	label := ast.NewList(ast.NewIdent("_"))
 	return ast.NewStruct(&ast.Field{Label: label, Value: SchemaExpr(s)})
 }
-

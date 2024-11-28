@@ -1,18 +1,18 @@
 package schema_test
 
 import (
-	"testing"
-	"reflect"
-	"github.com/westelh/tfprovider-cue/schema"
 	"cuelang.org/go/cue/ast"
 	tf_schema "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/westelh/tfprovider-cue/schema"
+	"reflect"
+	"testing"
 )
 
 func TestResourceWithComments(t *testing.T) {
 	var got ast.Expr = schema.ResourceExpr(&tf_schema.Resource{
 		Schema: map[string]*tf_schema.Schema{
 			"foo": {
-				Type: tf_schema.TypeString,
+				Type:        tf_schema.TypeString,
 				Description: "This is a foo",
 			},
 		},
@@ -28,7 +28,7 @@ func TestResourceWithDefault(t *testing.T) {
 	var got ast.Expr = schema.ResourceExpr(&tf_schema.Resource{
 		Schema: map[string]*tf_schema.Schema{
 			"foo": {
-				Type: tf_schema.TypeString,
+				Type:    tf_schema.TypeString,
 				Default: "bar",
 			},
 		},

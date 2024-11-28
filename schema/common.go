@@ -25,4 +25,3 @@ func DefaultExpr(s *tf_schema.Schema) ast.Expr {
 	}
 	return nil
 }
-
