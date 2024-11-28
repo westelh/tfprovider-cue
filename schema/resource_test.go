@@ -39,3 +39,35 @@ func TestResourceWithDefault(t *testing.T) {
 		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
 	}
 }
+
+func TestResourceWithOptional(t *testing.T) {
+	var got ast.Expr = schema.ResourceExpr(&tf_schema.Resource{
+		Schema: map[string]*tf_schema.Schema{
+			"foo": {
+				Type:     tf_schema.TypeString,
+				Optional: true,
+			},
+		},
+	})
+	want := `{foo?: string}`
+
+	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
+		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
+	}
+}
+
+func TestResourceWithRequired(t *testing.T) {
+	var got ast.Expr = schema.ResourceExpr(&tf_schema.Resource{
+		Schema: map[string]*tf_schema.Schema{
+			"foo": {
+				Type:     tf_schema.TypeString,
+				Required: true,
+			},
+		},
+	})
+	want := `{foo: string}`
+
+	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
+		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
+	}
+}

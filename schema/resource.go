@@ -2,7 +2,13 @@ package schema
 
 import (
 	"cuelang.org/go/cue/ast"
+	"cuelang.org/go/cue/token"
 	tf_schema "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
+
+const (
+	REQUIRED = token.NOT
+	OPTIONAL = token.OPTION
 )
 
 func ResourceExpr(resource *tf_schema.Resource) *ast.StructLit {
@@ -19,6 +25,14 @@ func ResourceExpr(resource *tf_schema.Resource) *ast.StructLit {
 
 		if s.Default != nil {
 			f.Value = Or(MarkDefault(DefaultExpr(s)), f.Value)
+		}
+
+		if s.Optional {
+			f.Constraint = OPTIONAL
+		}
+
+		if s.Required {
+			f.Constraint = REQUIRED
 		}
 
 		fields[name] = &f
