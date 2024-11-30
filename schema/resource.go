@@ -28,7 +28,7 @@ func ResourceExpr(resource *tf_schema.Resource, dropReadOnly bool) *ast.StructLi
 		}
 
 		if s.Default != nil {
-			f.Value = Or(MarkDefault(DefaultExpr(s)), f.Value)
+			f.Value = Or(DefaultExpr(s), f.Value)
 		}
 
 		if s.Optional {
