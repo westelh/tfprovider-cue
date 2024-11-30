@@ -16,7 +16,7 @@ func TestResourceWithComments(t *testing.T) {
 				Description: "This is a foo",
 			},
 		},
-	})
+	}, false)
 	want := "{// This is a foo\nfoo: string}"
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
@@ -32,7 +32,7 @@ func TestResourceWithDefault(t *testing.T) {
 				Default: "bar",
 			},
 		},
-	})
+	}, false)
 	want := `{foo: *bar | string}`
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
@@ -48,7 +48,7 @@ func TestResourceWithOptional(t *testing.T) {
 				Optional: true,
 			},
 		},
-	})
+	}, false)
 	want := `{foo?: string}`
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
@@ -64,8 +64,32 @@ func TestResourceWithRequired(t *testing.T) {
 				Required: true,
 			},
 		},
-	})
+	}, false)
 	want := `{foo: string}`
+
+	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
+		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
+	}
+}
+
+func TestDropReadOnly(t *testing.T) {
+	var got ast.Expr = schema.ResourceExpr(&tf_schema.Resource{
+		Schema: map[string]*tf_schema.Schema{
+			"foo": {
+				Type:       tf_schema.TypeString,
+				Optional: false,
+				Required: false,
+				Computed: true,
+			},
+			"bar": {
+				Type:       tf_schema.TypeString,
+				Optional: false,
+				Required: false,
+				Computed: false,
+			},
+		},
+	}, true)
+	want := `{bar: string}`
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
 		t.Fatalf("unexpected cue: %s expected: %s", FormatExpr(&got), FormatString(want))
