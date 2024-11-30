@@ -11,16 +11,16 @@ const (
 	OPTIONAL = token.OPTION
 )
 
-func ResourceExpr(resource *tf_schema.Resource, dropReadOnly bool) *ast.StructLit {
+func ResourceExpr(resource *tf_schema.Resource, opt Option) *ast.StructLit {
 	var fields map[string]*ast.Field = make(map[string]*ast.Field)
 	for name, s := range resource.Schema {
-		if dropReadOnly && !s.Optional && !s.Required && s.Computed {
+		if opt.DropReadOnly && !s.Optional && !s.Required && s.Computed {
 			continue
 		}
 		
 		f := ast.Field{}
 
-		f.Value = SchemaExpr(s, dropReadOnly)
+		f.Value = SchemaExpr(s, opt)
 		f.Label = ast.NewIdent(name)
 
 		if s.Description != "" {

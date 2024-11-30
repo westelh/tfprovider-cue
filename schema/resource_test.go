@@ -1,11 +1,12 @@
 package schema_test
 
 import (
+	"reflect"
+	"testing"
+
 	"cuelang.org/go/cue/ast"
 	tf_schema "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/westelh/tfprovider-cue/schema"
-	"reflect"
-	"testing"
 )
 
 func TestResourceWithComments(t *testing.T) {
@@ -16,7 +17,7 @@ func TestResourceWithComments(t *testing.T) {
 				Description: "This is a foo",
 			},
 		},
-	}, false)
+	}, schema.Option{DropReadOnly: false})
 	want := "{// This is a foo\nfoo: string}"
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
@@ -32,7 +33,7 @@ func TestResourceWithDefault(t *testing.T) {
 				Default: "bar",
 			},
 		},
-	}, false)
+	}, schema.Option{DropReadOnly: false})
 	want := `{foo: *bar | string}`
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
@@ -48,7 +49,7 @@ func TestResourceWithOptional(t *testing.T) {
 				Optional: true,
 			},
 		},
-	}, false)
+	}, schema.Option{DropReadOnly: false})
 	want := `{foo?: string}`
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
@@ -64,7 +65,7 @@ func TestResourceWithRequired(t *testing.T) {
 				Required: true,
 			},
 		},
-	}, false)
+	}, schema.Option{DropReadOnly: false})
 	want := `{foo: string}`
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
@@ -88,7 +89,7 @@ func TestDropReadOnly(t *testing.T) {
 				Computed: false,
 			},
 		},
-	}, true)
+	}, schema.Option{DropReadOnly: true})
 	want := `{bar: string}`
 
 	if reflect.DeepEqual(FormatExpr(&got), FormatString(want)) {
