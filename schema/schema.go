@@ -38,7 +38,7 @@ func SchemaExpr(s *tf_schema.Schema, opt Option) ast.Expr {
 			}
 		}
 	}
-	return nil
+	return &ast.BadExpr{}
 }
 
 func listOf(elem interface{}, opt Option) ast.Expr {
@@ -48,8 +48,9 @@ func listOf(elem interface{}, opt Option) ast.Expr {
 		return ast.NewList(&ast.Ellipsis{Type: SchemaExpr(elem, opt)})
 	case *tf_schema.Resource:
 		return ast.NewList(&ast.Ellipsis{Type: ResourceExpr(elem, opt)})
+	default:
+		return &ast.BadExpr{}
 	}
-	return nil
 }
 
 func mapOf(s *tf_schema.Schema, opt Option) ast.Expr {
