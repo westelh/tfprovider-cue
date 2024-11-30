@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"strconv"
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/token"
 	tf_schema "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,9 +18,15 @@ func DefaultExpr(s *tf_schema.Schema) ast.Expr {
 	case tf_schema.TypeBool:
 		return MarkDefault(ast.NewBool(s.Default.(bool)))
 	case tf_schema.TypeInt:
-		return MarkDefault(ast.NewLit(token.INT, s.Default.(string)))
+		return MarkDefault(ast.NewLit(token.INT, strconv.Itoa(s.Default.(int))))
 	case tf_schema.TypeFloat:
-		return MarkDefault(ast.NewLit(token.FLOAT, s.Default.(string)))
+		// s.Default can be float32 or float64
+		switch f := s.Default.(type) {
+		case float32:
+			return MarkDefault(ast.NewLit(token.FLOAT, strconv.FormatFloat(float64(f), 'f', -1, 32)))
+		case float64:
+			return MarkDefault(ast.NewLit(token.FLOAT, strconv.FormatFloat(f, 'f', -1, 64)))
+		}
 	case tf_schema.TypeString:
 		return MarkDefault(ast.NewString(s.Default.(string)))
 	}
