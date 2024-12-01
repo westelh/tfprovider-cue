@@ -37,6 +37,7 @@ func SchemaExpr(s *tf_schema.Schema, opt Option) ast.Expr {
 				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeString}, opt)
 			}
 		}
+		return ast.NewIdent("_")
 	}
 	return &ast.BadExpr{}
 }
