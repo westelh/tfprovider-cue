@@ -15,29 +15,31 @@ func SchemaExpr(s *tf_schema.Schema, opt Option) ast.Expr {
 		return &ast.Ident{Name: "float"}
 	case tf_schema.TypeString:
 		return &ast.Ident{Name: "string"}
+
+	// Expression should remark that the order of elements is preserved.
+	// But cue does not regard the order of elements after all.
 	case tf_schema.TypeSet: // Ordering of elements is preserved
-		// Expression should remark that the order of elements is preserved.
-		// But cue does not regard the order of elements after all.
 		return listOf(s.Elem, opt)
 	case tf_schema.TypeList: // Ordering of elements is NOT preserved
 		return listOf(s.Elem, opt)
+		
 	case tf_schema.TypeMap:
 		switch elem := s.Elem.(type) {
 		case *tf_schema.Schema:
-			return mapOf(elem, opt)
+			return structOfSameValue(SchemaExpr(elem, opt))
 		case tf_schema.ValueType:
 			switch elem {
 			case tf_schema.TypeBool:
-				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeBool}, opt)
+				return structOfSameValue(SchemaExpr(&tf_schema.Schema{Type: tf_schema.TypeBool}, opt))
 			case tf_schema.TypeInt:
-				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeInt}, opt)
+				return structOfSameValue(SchemaExpr(&tf_schema.Schema{Type: tf_schema.TypeInt}, opt))
 			case tf_schema.TypeFloat:
-				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeFloat}, opt)
+				return structOfSameValue(SchemaExpr(&tf_schema.Schema{Type: tf_schema.TypeFloat}, opt))
 			case tf_schema.TypeString:
-				return mapOf(&tf_schema.Schema{Type: tf_schema.TypeString}, opt)
+				return structOfSameValue(SchemaExpr(&tf_schema.Schema{Type: tf_schema.TypeString}, opt))
 			}
 		}
-		return ast.NewIdent("_")
+		return structOfSameValue(ast.NewIdent("_"))
 	}
 	return &ast.BadExpr{}
 }
@@ -54,7 +56,7 @@ func listOf(elem interface{}, opt Option) ast.Expr {
 	}
 }
 
-func mapOf(s *tf_schema.Schema, opt Option) ast.Expr {
+func structOfSameValue(e ast.Expr) *ast.StructLit{
 	label := ast.NewList(ast.NewIdent("_"))
-	return ast.NewStruct(&ast.Field{Label: label, Value: SchemaExpr(s, opt)})
+	return ast.NewStruct(&ast.Field{Label: label, Value: e})
 }
