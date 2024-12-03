@@ -1,10 +1,10 @@
 package schema
 
 import (
-	"strconv"
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/token"
 	tf_schema "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"strconv"
 )
 
 // Extracts the default value from a schema

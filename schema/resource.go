@@ -17,7 +17,7 @@ func ResourceExpr(resource *tf_schema.Resource, opt Option) *ast.StructLit {
 		if opt.DropReadOnly && !s.Optional && !s.Required && s.Computed {
 			continue
 		}
-		
+
 		f := ast.Field{}
 
 		f.Value = SchemaExpr(s, opt)

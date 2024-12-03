@@ -77,13 +77,13 @@ func TestDropReadOnly(t *testing.T) {
 	var got ast.Expr = schema.ResourceExpr(&tf_schema.Resource{
 		Schema: map[string]*tf_schema.Schema{
 			"foo": {
-				Type:       tf_schema.TypeString,
+				Type:     tf_schema.TypeString,
 				Optional: false,
 				Required: false,
 				Computed: true,
 			},
 			"bar": {
-				Type:       tf_schema.TypeString,
+				Type:     tf_schema.TypeString,
 				Optional: false,
 				Required: false,
 				Computed: false,
