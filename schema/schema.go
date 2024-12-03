@@ -22,7 +22,7 @@ func SchemaExpr(s *tf_schema.Schema, opt Option) ast.Expr {
 		return listOf(s.Elem, opt)
 	case tf_schema.TypeList: // Ordering of elements is NOT preserved
 		return listOf(s.Elem, opt)
-		
+
 	case tf_schema.TypeMap:
 		switch elem := s.Elem.(type) {
 		case *tf_schema.Schema:
@@ -48,15 +48,31 @@ func listOf(elem interface{}, opt Option) ast.Expr {
 	// TypeSet supports *Schema and *Resource elements
 	switch elem := elem.(type) {
 	case *tf_schema.Schema:
-		return ast.NewList(&ast.Ellipsis{Type: SchemaExpr(elem, opt)})
+		return openList(SchemaExpr(elem, opt))
 	case *tf_schema.Resource:
-		return ast.NewList(&ast.Ellipsis{Type: ResourceExpr(elem, opt)})
-	default:
-		return &ast.BadExpr{}
+		return openList(ResourceExpr(elem, opt))
+
+	// Additionally, ValueType is supported for broad compatibility
+	case tf_schema.ValueType:
+		switch elem {
+		case tf_schema.TypeBool:
+			return openList(ast.NewIdent("bool"))
+		case tf_schema.TypeInt:
+			return openList(ast.NewIdent("int"))
+		case tf_schema.TypeFloat:
+			return openList(ast.NewIdent("float"))
+		case tf_schema.TypeString:
+			return openList(ast.NewIdent("string"))
+		}
 	}
+	return &ast.BadExpr{}
 }
 
-func structOfSameValue(e ast.Expr) *ast.StructLit{
+func openList(t ast.Expr) ast.Expr {
+	return ast.NewList(&ast.Ellipsis{Type: t})
+}
+
+func structOfSameValue(e ast.Expr) *ast.StructLit {
 	label := ast.NewList(ast.NewIdent("_"))
 	return ast.NewStruct(&ast.Field{Label: label, Value: e})
 }
